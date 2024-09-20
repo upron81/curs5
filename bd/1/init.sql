@@ -1,4 +1,28 @@
--- Таблица для хранения тарифных планов
+DROP TABLE IF EXISTS dbo.InternetUsage;
+DROP TABLE IF EXISTS dbo.Messages;
+DROP TABLE IF EXISTS dbo.Calls;
+DROP TABLE IF EXISTS dbo.Contracts;
+DROP TABLE IF EXISTS dbo.Subscribers;
+DROP TABLE IF EXISTS dbo.TariffPlans;
+DROP TABLE IF EXISTS dbo.Staff;
+DROP TABLE IF EXISTS dbo.StaffPosition;
+
+
+-- Таблица для хранения должностей сотрудников
+CREATE TABLE StaffPosition (
+    PositionID INT PRIMARY KEY IDENTITY(1,1),    -- Идентификатор должности
+    PositionName NVARCHAR(100) NOT NULL          -- Название должности (например, "Менеджер", "Оператор")
+);
+
+-- Таблица для хранения информации о сотрудниках
+CREATE TABLE Staff (
+    StaffID INT PRIMARY KEY IDENTITY(1,1),       -- Идентификатор сотрудника
+    FullName NVARCHAR(150) NOT NULL,             -- ФИО сотрудника
+    PositionID INT NOT NULL FOREIGN KEY REFERENCES StaffPosition(PositionID), -- Ссылка на должность сотрудника
+    Education NVARCHAR(100)                      -- Образование сотрудника
+);
+
+--Таблица для хранения информации о тарифных планах
 CREATE TABLE TariffPlans (
     TariffPlanID INT PRIMARY KEY IDENTITY(1,1),  -- Идентификатор тарифного плана
     TariffName NVARCHAR(100) NOT NULL,           -- Название тарифного плана
@@ -54,18 +78,4 @@ CREATE TABLE InternetUsage (
     UsageDate DATETIME NOT NULL,                 -- Дата и время использования интернета
     DataSentMB DECIMAL(10, 2) NOT NULL,          -- Объем отправленных данных (в МБ)
     DataReceivedMB DECIMAL(10, 2) NOT NULL       -- Объем полученных данных (в МБ)
-);
-
--- Отдел кадров (данные обо всех сотрудниках)
-CREATE TABLE Staff (
-    StaffID INT PRIMARY KEY IDENTITY(1,1),       -- Идентификатор сотрудника
-    FullName NVARCHAR(150) NOT NULL,             -- ФИО сотрудника
-    PositionID INT NOT NULL FOREIGN KEY REFERENCES StaffPosition(PositionID), -- Идентификатор должности
-    Education NVARCHAR(100)                      -- Образование сотрудника
-);
-
--- Таблица для хранения должностей сотрудников
-CREATE TABLE StaffPosition (
-    PositionID INT PRIMARY KEY IDENTITY(1,1),    -- Идентификатор должности
-    PositionName NVARCHAR(100) NOT NULL          -- Название должности (например, "Менеджер", "Оператор")
 );
