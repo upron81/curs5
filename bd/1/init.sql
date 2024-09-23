@@ -6,6 +6,11 @@ DROP TABLE IF EXISTS dbo.Subscribers;
 DROP TABLE IF EXISTS dbo.TariffPlans;
 DROP TABLE IF EXISTS dbo.Staff;
 DROP TABLE IF EXISTS dbo.StaffPosition;
+DROP VIEW IF EXISTS dbo.EmployeeInfo;
+DROP VIEW IF EXISTS dbo.SubscriberInfo;
+DROP VIEW IF EXISTS dbo.ContractCalls;
+DROP VIEW IF EXISTS dbo.ContractMessages;
+DROP VIEW IF EXISTS dbo.ContractInternetUsage;
 
 
 -- Таблица для хранения должностей сотрудников
@@ -79,3 +84,84 @@ CREATE TABLE InternetUsage (
     DataSentMB DECIMAL(10, 2) NOT NULL,          -- Объем отправленных данных (в МБ)
     DataReceivedMB DECIMAL(10, 2) NOT NULL       -- Объем полученных данных (в МБ)
 );
+
+
+
+GO
+
+CREATE VIEW EmployeeInfo AS
+SELECT 
+    s.StaffID,
+    s.FullName,
+    sp.PositionName,
+    s.Education
+FROM 
+    Staff s
+JOIN 
+    StaffPosition sp ON s.PositionID = sp.PositionID
+
+GO
+
+CREATE VIEW SubscriberInfo AS
+SELECT 
+    s.SubscriberID,
+    s.FullName AS SubscriberFullName,
+    s.HomeAddress,
+    s.PassportData,
+    c.ContractID,
+    c.ContractDate,
+    c.ContractEndDate,
+    c.PhoneNumber,
+    tp.TariffName
+FROM 
+    Subscribers s
+JOIN 
+    Contracts c ON s.SubscriberID = c.SubscriberID
+JOIN 
+    TariffPlans tp ON c.TariffPlanID = tp.TariffPlanID;
+
+GO
+
+CREATE VIEW ContractCalls AS
+SELECT 
+    c.ContractID,
+    c.PhoneNumber,
+    cl.CallID,
+    cl.CallDate,
+    cl.CallDuration
+FROM 
+    Contracts c
+JOIN 
+    Calls cl ON c.ContractID = cl.ContractID;
+
+GO
+
+CREATE VIEW ContractMessages AS
+SELECT 
+    c.ContractID,
+    c.PhoneNumber,
+    m.MessageID,
+    m.MessageDate,
+    m.IsMMS
+FROM 
+    Contracts c
+JOIN 
+    Messages m ON c.ContractID = m.ContractID;
+
+GO
+
+CREATE VIEW ContractInternetUsage AS
+SELECT 
+    c.ContractID,
+    c.PhoneNumber,
+    iu.UsageID,
+    iu.UsageDate,
+    iu.DataSentMB,
+    iu.DataReceivedMB
+FROM 
+    Contracts c
+JOIN 
+    InternetUsage iu ON c.ContractID = iu.ContractID;
+
+GO
+
