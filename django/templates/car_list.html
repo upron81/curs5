@@ -5,13 +5,19 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>List car</title>
+    <title>Список машин</title>
 </head>
 <body>
-    <ul>
+<p>
+    <a href="{% url 'add_spare' %}">Добавить деталь</a>
+</p>
+<p>
+    <a href="{% url 'add_car' %}">Добавить машину</a>
+</p>
+<ul>
     {% for i in car_list %}
-        <li><a href="{% url 'sparelist' car_id=i.id %}">{{i.name}}</a></li>
-    {% endfor  %}
-    </ul>
+    <li><a href="{% url 'spare_list' car_id=i.id %}">{{i.name}}</a></li>
+    {% endfor %}
+</ul>
 </body>
 </html>
