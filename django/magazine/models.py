@@ -12,7 +12,7 @@ class Car(models.Model):
 class Spare(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='машина')
     name = models.CharField('название', max_length=100)
-    price = models.IntegerField('цена')
+    price = models.PositiveIntegerField('цена')
 
     def __str__(self):
         return str(self.name)

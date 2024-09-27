@@ -86,6 +86,7 @@ CREATE TABLE InternetUsage (
 );
 
 
+-- Представления
 
 GO
 
@@ -165,3 +166,41 @@ JOIN
 
 GO
 
+
+
+-- Хранимые процедуры
+
+CREATE PROCEDURE InsertCall
+    @ContractID INT,
+    @CallDate DATETIME,
+    @CallDuration INT
+AS
+BEGIN
+    INSERT INTO Calls (ContractID, CallDate, CallDuration)
+    VALUES (@ContractID, @CallDate, @CallDuration);
+END;
+
+GO
+
+CREATE PROCEDURE InsertInternetUsage
+    @ContractID INT,
+    @UsageDate DATETIME,
+    @DataSentMB DECIMAL(10, 2),
+    @DataReceivedMB DECIMAL(10, 2)
+AS
+BEGIN
+    INSERT INTO InternetUsage (ContractID, UsageDate, DataSentMB, DataReceivedMB)
+    VALUES (@ContractID, @UsageDate, @DataSentMB, @DataReceivedMB);
+END;
+
+GO
+
+CREATE PROCEDURE InsertMessage
+    @ContractID INT,
+    @MessageDate DATETIME,
+    @IsMMS BIT
+AS
+BEGIN
+    INSERT INTO Messages (ContractID, MessageDate, IsMMS)
+    VALUES (@ContractID, @MessageDate, @IsMMS);
+END;
