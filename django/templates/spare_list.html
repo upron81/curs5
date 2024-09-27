@@ -5,12 +5,12 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{car_name}}</title>
+    <title>{{car.name}}</title>
 </head>
 <body>
     <h3>{{car_name}}</h3>
     {% for i in spare_list %}
-        <p data-car-name="{{i.car.name}}">{{i.name}}: {{i.price}} руб.</p>
+        <p>{{i.name}}: {{i.price}} руб. <a href="{% url 'spare_management' i.id %}">Редактировать</a></p>
     {% endfor  %}
 </body>
 </html>

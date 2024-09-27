@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% if car %}Редактировать{% else %}Добавить{% endif %} автомобиль</title>
+</head>
+<body>
+
+<h2>{% if car %}Редактировать{% else %}Добавить{% endif %} автомобиль</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if car %}Сохранить{% else %}Добавить{% endif %}</button>
+
+    {% if car %}
+    <button type="submit" name="delete">Удалить</button>
+    {% endif %}
+    <a href="{% url 'home' %}">Отмена</a>
+</form>
+
+</body>
+</html>

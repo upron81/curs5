@@ -8,15 +8,12 @@
     <title>Список машин</title>
 </head>
 <body>
-<p>
-    <a href="{% url 'add_spare' %}">Добавить деталь</a>
-</p>
-<p>
-    <a href="{% url 'add_car' %}">Добавить машину</a>
-</p>
+<p><a href="{% url 'car_add' %}">Добавить машину</a></p>
+<p><a href="{% url 'spare_add' %}">Добавить деталь</a></p>
 <ul>
     {% for i in car_list %}
-    <li><a href="{% url 'spare_list' car_id=i.id %}">{{i.name}}</a></li>
+    <li><a href="{% url 'spare_list' car_id=i.id %}">{{i.name}}</a> <a href="{% url 'car_management' i.id %}">Редактировать</a>
+    </li>
     {% endfor %}
 </ul>
 </body>

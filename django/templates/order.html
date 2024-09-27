@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if order %}Редактировать{% else %}Добавить{% endif %} заказ</title>
+</head>
+<body>
+<h2>{% if order %}Редактировать{% else %}Добавить{% endif %} заказ</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ order_form.as_p }}
+
+    <h3>Элементы заказа</h3>
+    {% for form in order_items %}
+        {{ form.as_p }}
+    {% endfor %}
+
+    <button type="submit">{% if order %}Сохранить{% else %}Добавить{% endif %}</button>
+    <a href="{% url 'home' %}">Отмена</a>
+</form>
+
+</body>
+</html>

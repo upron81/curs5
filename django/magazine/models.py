@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Car(models.Model):
@@ -9,9 +10,20 @@ class Car(models.Model):
 
 
 class Spare(models.Model):
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='машина')
     name = models.CharField('название', max_length=100)
     price = models.IntegerField('цена')
 
     def __str__(self):
         return str(self.name)
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='клиент')
+    date = models.DateTimeField('дата заказа', auto_now_add=True)
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='заказ')
+    spare = models.ForeignKey(Spare, on_delete=models.CASCADE, verbose_name='деталь')
+    count = models.IntegerField('количество')
