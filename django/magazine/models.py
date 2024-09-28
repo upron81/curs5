@@ -6,7 +6,7 @@ class Car(models.Model):
     name = models.CharField('название', max_length=100, unique=True)
 
     def __str__(self):
-        return str(self.name)
+        return f"{self.name}"
 
 
 class Spare(models.Model):
@@ -15,7 +15,7 @@ class Spare(models.Model):
     price = models.PositiveIntegerField('цена')
 
     def __str__(self):
-        return str(self.name)
+        return f"{self.name}"
 
 
 class Order(models.Model):
@@ -23,7 +23,7 @@ class Order(models.Model):
     date = models.DateTimeField('дата заказа', auto_now_add=True)
 
     def __str__(self):
-        return str(self.date)
+        return f"{self.user}, {self.date}"
 
 
 class OrderItem(models.Model):
@@ -31,5 +31,10 @@ class OrderItem(models.Model):
     spare = models.ForeignKey(Spare, on_delete=models.CASCADE, verbose_name='деталь')
     count = models.IntegerField('количество')
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['order', 'spare'], name='unique_order_spare')
+        ]
+
     def __str__(self):
-        return f"{self.order} {self.spare} {self.count}"
+        return f"{self.order}, {self.spare}, {self.count}"
