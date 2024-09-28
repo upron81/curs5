@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Сумма заказов</title>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Рассчитать</button>
+</form>
+
+{% if total_sum is not None %}
+    <h2>Сумма выполненных заказов: {{ total_sum }}</h2>
+{% endif %}
+
+</body>
+</html>

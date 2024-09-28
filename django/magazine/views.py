@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from magazine.forms import SpareForm, CarForm, OrderForm, OrderItemFormSet
+from magazine.forms import SpareForm, CarForm, OrderForm, OrderItemFormSet, DateRangeForm
 from magazine.models import Spare, Car, Order, OrderItem
+from django.db.models import F, Sum
 
 
 def home(request):
@@ -112,4 +113,26 @@ def order_management(request, order_id=None):
         'order_form': order_form,
         'order_item_formset': order_item_formset,
         'order': order
+    })
+
+
+def completed_orders_sum(request):
+    total_sum = None
+    form = DateRangeForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        start_date = form.cleaned_data['start_date']
+        end_date = form.cleaned_data['end_date']
+
+        total_sum = OrderItem.objects.filter(
+            order__completed=True,
+            order__date__range=(start_date, end_date)
+        ).aggregate(total=Sum(F('count') * F('spare__price')))['total']
+
+        if total_sum is None:
+            total_sum = 0
+
+    return render(request, 'completed_orders_sum.html', {
+        'form': form,
+        'total_sum': total_sum
     })

@@ -17,7 +17,7 @@ class CarForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['user']
+        fields = '__all__'
 
 
 OrderItemFormSet = forms.inlineformset_factory(
@@ -27,3 +27,8 @@ OrderItemFormSet = forms.inlineformset_factory(
     extra=1,
     can_delete=True
 )
+
+
+class DateRangeForm(forms.Form):
+    start_date = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}), label='Начальная дата')
+    end_date = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}), label='Конечная дата')

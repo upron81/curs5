@@ -21,6 +21,7 @@ class Spare(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='клиент')
     date = models.DateTimeField('дата заказа', auto_now_add=True)
+    completed = models.BooleanField('выполнен', default=False)
 
     def __str__(self):
         return f"{self.user}, {self.date}"
@@ -29,7 +30,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='заказ')
     spare = models.ForeignKey(Spare, on_delete=models.CASCADE, verbose_name='деталь')
-    count = models.IntegerField('количество')
+    count = models.PositiveIntegerField('количество')
 
     class Meta:
         constraints = [
