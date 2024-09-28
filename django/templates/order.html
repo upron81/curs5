@@ -12,13 +12,23 @@
     {{ order_form.as_p }}
 
     <h3>Элементы заказа</h3>
-    {% for form in order_items %}
-        {{ form.as_p }}
-    {% endfor %}
+    {{ order_item_formset.management_form }}
+    <table>
+        {% for form in order_item_formset %}
+            <tr>
+                <td>{{ form.as_p }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 
     <button type="submit">{% if order %}Сохранить{% else %}Добавить{% endif %}</button>
-    <a href="{% url 'home' %}">Отмена</a>
+
+    {% if order %}
+        <button type="submit" name="delete">Удалить заказ</button>
+    {% endif %}
+    <a href="{% url 'order_list' %}">Отмена</a>
 </form>
+
 
 </body>
 </html>

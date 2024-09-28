@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список заказов</title>
+</head>
+<body>
+<h2>Список заказов</h2>
+<ul>
+    {% for i in order_list %}
+    <li><a href="{% url 'order_management' order_id=i.id %}">{{i.date}}</a></li>
+    {% endfor %}
+</ul>
+</body>
+</html>

@@ -22,8 +22,14 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='клиент')
     date = models.DateTimeField('дата заказа', auto_now_add=True)
 
+    def __str__(self):
+        return str(self.date)
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='заказ')
     spare = models.ForeignKey(Spare, on_delete=models.CASCADE, verbose_name='деталь')
     count = models.IntegerField('количество')
+
+    def __str__(self):
+        return f"{self.order} {self.spare} {self.count}"

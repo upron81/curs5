@@ -17,10 +17,13 @@ class CarForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['user']
 
 
-class OrderItemForm(forms.ModelForm):
-    class Meta:
-        model = OrderItem
-        fields = '__all__'
+OrderItemFormSet = forms.inlineformset_factory(
+    Order, OrderItem,
+    form=forms.ModelForm,
+    fields=['spare', 'count'],
+    extra=1,
+    can_delete=True
+)
