@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import F, Sum
+from django.views.generic import TemplateView
+from django.views.generic.edit import FormMixin
+from django.urls import reverse_lazy
 
 from magazine.forms import SpareForm, CarForm, OrderForm, OrderItemFormSet, DateRangeForm
 from magazine.models import Spare, Car, Order, OrderItem
-from django.db.models import F, Sum
 
 
-def home(request):
-    return render(request, 'home.html')
+class HomeView(TemplateView):
+    template_name = 'home.html'
 
 
 def spare_list(request, car_id):
@@ -20,31 +23,46 @@ def car_list(request):
     return render(request, 'car_list.html', {'car_list': car_list_})
 
 
-def spare_management(request, spare_id=None):
-    if spare_id:
-        spare = get_object_or_404(Spare, id=spare_id)
+class SpareManagementView(FormMixin, TemplateView):
+    model = Spare
+    template_name = 'spare.html'
+    form_class = SpareForm
+    success_url = reverse_lazy('car_list')
 
-        if request.method == 'POST':
-            if 'delete' in request.POST:
-                spare.delete()
-                return redirect('car_list')
-            else:
-                form = SpareForm(request.POST, instance=spare)
-                if form.is_valid():
-                    form.save()
-                    return redirect('car_list')
-        else:
-            form = SpareForm(instance=spare)
-    else:
-        if request.method == 'POST':
-            form = SpareForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('car_list')
-        else:
-            form = SpareForm()
+    def get_object(self):
+        spare_id = self.kwargs.get('spare_id')
+        if spare_id:
+            return get_object_or_404(Spare, id=spare_id)
+        return None
 
-    return render(request, 'spare.html', {'form': form, 'spare': spare if spare_id else None})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spare'] = self.get_object()
+
+        if context['spare']:
+            context['form'] = self.form_class(instance=context['spare'])
+        else:
+            context['form'] = self.form_class()
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        spare = self.get_object()
+
+        if spare:
+            form = self.form_class(request.POST, instance=spare)
+        else:
+            form = self.form_class(request.POST)
+
+        if 'delete' in request.POST and spare:
+            spare.delete()
+            return redirect(self.success_url)
+
+        if form.is_valid():
+            form.save()
+            return redirect(self.success_url)
+
+        return self.form_invalid(form)
 
 
 def car_management(request, car_id=None):
