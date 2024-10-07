@@ -22,6 +22,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='клиент')
     date = models.DateTimeField('дата заказа', auto_now_add=True)
     completed = models.BooleanField('выполнен', default=False)
+    is_cart = models.BooleanField('корзина', default=True)
 
     def __str__(self):
         return f"{self.user}, {self.date}"

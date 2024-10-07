@@ -1,4 +1,5 @@
 <!doctype html>
+{% load is_staff %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,7 +11,13 @@
 <body>
 <ul>
     {% for i in car_list %}
-    <li><a href="{% url 'spare_list' car_id=i.id %}">{{i.name}}</a> <a href="{% url 'car_management' i.id %}">Редактировать</a>
+    <li>
+        <a href="{% url 'spare_list' car_id=i.id %}">{{i.name}}</a>
+        {% if request.user.is_authenticated %}
+            {% if  request.user|is_staff %}
+                <a href="{% url 'car_management' i.id %}">Редактировать</a>
+            {% endif %}
+        {% endif %}
     </li>
     {% endfor %}
 </ul>

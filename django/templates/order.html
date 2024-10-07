@@ -1,17 +1,35 @@
 <!DOCTYPE html>
+{% load is_staff %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% if order %}Редактировать{% else %}Добавить{% endif %} заказ</title>
 </head>
 <body>
-<h2>{% if order %}Редактировать{% else %}Добавить{% endif %} заказ</h2>
+<h2>{% if order %}Редактировать{% else %}Добавить{% endif %}
+        {% if order.is_cart %}
+    корзину
+        {% else %}
+    заказ
+        {% endif %}
+
+</h2>
 
 <form method="post">
     {% csrf_token %}
+
+{% if request.user.is_authenticated %}
+    {% if  request.user|is_staff %}
     {{ order_form.as_p }}
 
-    <h3>Элементы заказа</h3>
+    {% endif %}
+{% endif %}
+    <h3>Элементы
+        {% if order.is_cart %}
+    корзины
+        {% else %}
+    заказ
+        {% endif %}</h3>
     {{ order_item_formset.management_form }}
     <table>
         {% for form in order_item_formset %}
@@ -24,9 +42,11 @@
     <button type="submit">{% if order %}Сохранить{% else %}Добавить{% endif %}</button>
 
     {% if order %}
-        <button type="submit" name="delete">Удалить заказ</button>
+        <button type="submit" name="delete">Удалить</button>
     {% endif %}
     <a href="{% url 'order_list' %}">Отмена</a>
+    <a href="{% url 'order_approve' order_id=order.id %}">Заказать</a>
+
 </form>
 
 

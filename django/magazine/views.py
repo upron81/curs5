@@ -1,9 +1,12 @@
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import F, Sum
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 
+from magazine.templatetags.is_staff import is_staff
 from magazine.forms import SpareForm, CarForm, OrderForm, OrderItemFormSet, DateRangeForm
 from magazine.models import Spare, Car, Order, OrderItem
 
@@ -23,6 +26,7 @@ def car_list(request):
     return render(request, 'car_list.html', {'car_list': car_list_})
 
 
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class SpareManagementView(FormMixin, TemplateView):
     model = Spare
     template_name = 'spare.html'
@@ -65,6 +69,7 @@ class SpareManagementView(FormMixin, TemplateView):
         return self.form_invalid(form)
 
 
+@user_passes_test(is_staff)
 def car_management(request, car_id=None):
     if car_id:
         car = get_object_or_404(Car, id=car_id)
@@ -93,12 +98,16 @@ def car_management(request, car_id=None):
 
 
 def order_list(request):
-    order_list_ = Order.objects.all()
+    if request.user.is_authenticated:
+        order_list_ = Order.objects.filter(user=request.user)
+    else:
+        order_list_ = Order.objects.none()
+
     return render(request, 'order_list.html', {'order_list': order_list_, 'qqq': len(order_list_)})
 
 
 def order_management(request, order_id=None):
-    order = get_object_or_404(Order, id=order_id) if order_id else None
+    order = get_object_or_404(Order, id=order_id, user=request.user) if order_id else None
 
     if request.method == 'POST':
         if order_id:
@@ -134,6 +143,7 @@ def order_management(request, order_id=None):
     })
 
 
+@user_passes_test(is_staff)
 def completed_orders_sum(request):
     total_sum = None
     form = DateRangeForm(request.POST or None)
@@ -154,3 +164,30 @@ def completed_orders_sum(request):
         'form': form,
         'total_sum': total_sum
     })
+
+
+@login_required
+def add_to_cart(request, spare_id):
+    count = request.GET.get('count')
+
+    if count is None or int(count) <= 0:
+        return redirect('home')
+
+    count = int(count)
+    order, created = Order.objects.get_or_create(user=request.user, is_cart=True)
+    spare = get_object_or_404(Spare, id=spare_id)
+    order_item, created = OrderItem.objects.get_or_create(order=order, spare=spare, defaults={'count': 0})
+    order_item.count += count
+    order_item.save()
+
+    return redirect('home')
+
+def order_approve(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order.is_cart = False
+    order.save()
+    print(order_id)
+    print(order_id)
+    print(order_id)
+    print(order_id)
+    return redirect('order_list')

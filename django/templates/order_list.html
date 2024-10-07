@@ -8,7 +8,13 @@
 <h2>Список заказов</h2>
 <ul>
     {% for i in order_list %}
-    <li><a href="{% url 'order_management' order_id=i.id %}">{{i.user}} - {{i.date}}</a></li>
+    <li><a href="{% url 'order_management' order_id=i.id %}">
+        {% if i.is_cart %}
+        Моя корзина
+        {% else %}
+            {{i.user}} - {{i.date}}
+        {% endif %}
+    </a></li>
     {% endfor %}
 </ul>
 </body>

@@ -1,15 +1,32 @@
 <!DOCTYPE html>
+{% load is_staff %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
 <body>
+<nav>
+    <ul>
+        {% if request.user.is_authenticated %}
+            <li>Привет, {{ request.user.username }}!</li>
+            <li><a href="{% url 'authdj:logout' %}">Выйти</a></li>
+        {% else %}
+            <li><a href="{% url 'authdj:login' %}">Войти</a></li>
+            <li><a href="{% url 'authdj:register' %}">Регистрация</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% if request.user.is_authenticated %}
+    {% if  request.user|is_staff %}
 <p><a href="{% url 'car_add' %}">Добавить машину</a></p>
 <p><a href="{% url 'spare_add' %}">Добавить деталь</a></p>
 <p><a href="{% url 'order_add' %}">Добавить заказ</a></p>
+<p><a href="{% url 'completed_orders_sum' %}">Расчет суммы заказов</a></p>
+    {% endif %}
+{% endif %}
 <p><a href="{% url 'order_list' %}">Список заказов</a></p>
 <p><a href="{% url 'car_list' %}">Список машин</a></p>
-<p><a href="{% url 'completed_orders_sum' %}">Расчет суммы заказов</a></p>
 </body>
 </html>
