@@ -13,6 +13,7 @@ class Spare(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='машина')
     name = models.CharField('название', max_length=100)
     price = models.PositiveIntegerField('цена')
+    photo = models.ImageField(upload_to='spare_photos/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"

@@ -54,9 +54,9 @@ class SpareManagementView(FormMixin, TemplateView):
         spare = self.get_object()
 
         if spare:
-            form = self.form_class(request.POST, instance=spare)
+            form = self.form_class(request.POST, request.FILES, instance=spare)
         else:
-            form = self.form_class(request.POST)
+            form = self.form_class(request.POST, request.FILES)
 
         if 'delete' in request.POST and spare:
             spare.delete()
@@ -182,12 +182,9 @@ def add_to_cart(request, spare_id):
 
     return redirect('home')
 
+
 def order_approve(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     order.is_cart = False
     order.save()
-    print(order_id)
-    print(order_id)
-    print(order_id)
-    print(order_id)
     return redirect('order_list')

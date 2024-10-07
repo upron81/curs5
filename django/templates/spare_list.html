@@ -12,6 +12,11 @@
     <h3>{{car_name}}</h3>
     {% for i in spare_list %}
         <p>{{i.name}}: {{i.price}} руб.
+            {% if i.photo %}
+    <img src="{{ i.photo.url }}" alt="{{ i.name }}">
+{% else %}
+    <p>Изображение отсутствует</p>
+{% endif %}
         {% if request.user.is_authenticated %}
             {% if  request.user|is_staff %}
                 <a href="{% url 'spare_management' i.id %}">Редактировать {{i}}</a>
