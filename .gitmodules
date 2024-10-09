@@ -1,0 +1,3 @@
+[submodule "bd/db2"]
+	path = bd/db2
+	url = git@github-gstu:upron81/db2.git
