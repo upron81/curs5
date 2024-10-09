@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tariffs>
+    <tariff>
+        <name>ефкуаа</name>
+        <cost>2324.0</cost>
+    </tariff>
+</tariffs>
