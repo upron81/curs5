@@ -11,7 +11,9 @@ DROP VIEW IF EXISTS dbo.SubscriberInfo;
 DROP VIEW IF EXISTS dbo.ContractCalls;
 DROP VIEW IF EXISTS dbo.ContractMessages;
 DROP VIEW IF EXISTS dbo.ContractInternetUsage;
-
+DROP PROCEDURE IF EXISTS dbo.InsertCall;
+DROP PROCEDURE IF EXISTS dbo.InsertInternetUsage;
+DROP PROCEDURE IF EXISTS dbo.InsertMessage;
 
 -- Таблица для хранения должностей сотрудников
 CREATE TABLE StaffPosition (
@@ -23,11 +25,11 @@ CREATE TABLE StaffPosition (
 CREATE TABLE Staff (
     StaffID INT PRIMARY KEY IDENTITY(1,1),       -- Идентификатор сотрудника
     FullName NVARCHAR(150) NOT NULL,             -- ФИО сотрудника
-    PositionID INT NOT NULL FOREIGN KEY REFERENCES StaffPosition(PositionID), -- Ссылка на должность сотрудника
+    PositionID INT NOT NULL FOREIGN KEY REFERENCES StaffPosition(PositionID) ON DELETE CASCADE, -- Ссылка на должность сотрудника
     Education NVARCHAR(100)                      -- Образование сотрудника
 );
 
---Таблица для хранения информации о тарифных планах
+-- Таблица для хранения информации о тарифных планах
 CREATE TABLE TariffPlans (
     TariffPlanID INT PRIMARY KEY IDENTITY(1,1),  -- Идентификатор тарифного плана
     TariffName NVARCHAR(100) NOT NULL,           -- Название тарифного плана
@@ -52,18 +54,18 @@ CREATE TABLE Subscribers (
 -- Таблица для хранения договоров на оказание услуг
 CREATE TABLE Contracts (
     ContractID INT PRIMARY KEY IDENTITY(1,1),    -- Идентификатор договора
-    SubscriberID INT NOT NULL FOREIGN KEY REFERENCES Subscribers(SubscriberID),  -- Идентификатор абонента
-    TariffPlanID INT NOT NULL FOREIGN KEY REFERENCES TariffPlans(TariffPlanID),  -- Идентификатор тарифного плана
+    SubscriberID INT NOT NULL FOREIGN KEY REFERENCES Subscribers(SubscriberID) ON DELETE CASCADE,  -- Идентификатор абонента
+    TariffPlanID INT NOT NULL FOREIGN KEY REFERENCES TariffPlans(TariffPlanID) ON DELETE CASCADE,  -- Идентификатор тарифного плана
     ContractDate DATE NOT NULL,                  -- Дата заключения договора
     ContractEndDate DATE NULL,                   -- Дата окончания договора (может быть NULL)
     PhoneNumber NVARCHAR(20) NOT NULL,           -- Телефонный номер, присвоенный абоненту
-    StaffID INT NOT NULL FOREIGN KEY REFERENCES Staff(StaffID)  -- Ссылка на сотрудника, оформившего договор
+    StaffID INT NOT NULL FOREIGN KEY REFERENCES Staff(StaffID) ON DELETE CASCADE  -- Ссылка на сотрудника, оформившего договор
 );
 
 -- Таблица для хранения информации о звонках
 CREATE TABLE Calls (
     CallID INT PRIMARY KEY IDENTITY(1,1),        -- Идентификатор звонка
-    ContractID INT NOT NULL FOREIGN KEY REFERENCES Contracts(ContractID), -- Ссылка на договор
+    ContractID INT NOT NULL FOREIGN KEY REFERENCES Contracts(ContractID) ON DELETE CASCADE, -- Ссылка на договор
     CallDate DATETIME NOT NULL,                  -- Дата и время звонка
     CallDuration INT NOT NULL                    -- Продолжительность разговора (в секундах)
 );
@@ -71,7 +73,7 @@ CREATE TABLE Calls (
 -- Таблица для хранения информации о смс и ммс
 CREATE TABLE Messages (
     MessageID INT PRIMARY KEY IDENTITY(1,1),     -- Идентификатор сообщения
-    ContractID INT NOT NULL FOREIGN KEY REFERENCES Contracts(ContractID), -- Ссылка на договор
+    ContractID INT NOT NULL FOREIGN KEY REFERENCES Contracts(ContractID) ON DELETE CASCADE, -- Ссылка на договор
     MessageDate DATETIME NOT NULL,               -- Дата и время отправки сообщения (SMS или MMS)
     IsMMS BIT NOT NULL                           -- Если значение FALSE, то это SMS; если TRUE, то MMS
 );
@@ -79,7 +81,7 @@ CREATE TABLE Messages (
 -- Таблица для хранения информации о трафике интернета
 CREATE TABLE InternetUsage (
     UsageID INT PRIMARY KEY IDENTITY(1,1),       -- Идентификатор записи использования интернета
-    ContractID INT NOT NULL FOREIGN KEY REFERENCES Contracts(ContractID), -- Ссылка на договор
+    ContractID INT NOT NULL FOREIGN KEY REFERENCES Contracts(ContractID) ON DELETE CASCADE, -- Ссылка на договор
     UsageDate DATETIME NOT NULL,                 -- Дата и время использования интернета
     DataSentMB DECIMAL(10, 2) NOT NULL,          -- Объем отправленных данных (в МБ)
     DataReceivedMB DECIMAL(10, 2) NOT NULL       -- Объем полученных данных (в МБ)
