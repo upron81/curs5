@@ -3,6 +3,7 @@ package com.example.lab;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,15 +21,22 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String FILENAME = "products.dat";
+    private static final long SAVE_INTERVAL = 1000;
     private ProductRepository productRepository;
     private ListView listView;
     private EditText filterName, filterPrice, filterShelfLife;
+    private Handler handler;
+    private Runnable saveRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loadProductsFromFile();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        handler = new Handler();
+        startPeriodicSave();
+
         listView = findViewById(R.id.product_list);
         filterName = findViewById(R.id.filter_name);
         filterPrice = findViewById(R.id.filter_price);
@@ -46,6 +54,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void startPeriodicSave() {
+        saveRunnable = new Runnable() {
+            @Override
+            public void run() {
+                new SaveDataTask(MainActivity.this).execute(productRepository);
+                handler.postDelayed(this, SAVE_INTERVAL);
+            }
+        };
+        handler.post(saveRunnable);
+    }
+
+    private void stopPeriodicSave() {
+        handler.removeCallbacks(saveRunnable);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveProductsToFile();
+        stopPeriodicSave();
+    }
+
     private void loadProductsFromFile() {
         try (FileInputStream fis = openFileInput(FILENAME);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
@@ -60,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(productRepository);
         } catch (IOException e) {
-            // Ошибка при сохранении
         }
     }
 
@@ -86,15 +115,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        saveProductsToFile();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Product updatedProduct = (Product) data.getSerializableExtra("updatedProduct");
             if (updatedProduct != null) {
