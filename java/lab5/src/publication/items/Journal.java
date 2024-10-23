@@ -1,13 +1,17 @@
-class Journal extends Publication {
-    private final String issue;
+package publication.items;
+
+import publication.Publication;
+
+public class Journal extends Publication {
+    private String issue;
 
     public Journal(String title, String issue) {
-        super(title); // добавляем себя в список
+        super(title);
         this.issue = issue;
     }
 
     @Override
-    void show() {
+    public void show() {
         System.out.println("Journal Title: " + title + ", Issue: " + issue);
     }
 }

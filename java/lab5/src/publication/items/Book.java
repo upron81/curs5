@@ -1,5 +1,9 @@
-class Book extends Publication {
-    private final String author;
+package publication.items;
+
+import publication.Publication;
+
+public class Book extends Publication {
+    private String author;
 
     public Book(String title, String author) {
         super(title);
@@ -7,7 +11,7 @@ class Book extends Publication {
     }
 
     @Override
-    void show() {
+    public void show() {
         System.out.println("Book Title: " + title + ", Author: " + author);
     }
 }

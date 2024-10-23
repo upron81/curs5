@@ -1,13 +1,17 @@
-class Textbook extends Publication {
-    private final String subject;
+package publication.items;
+
+import publication.Publication;
+
+public class Textbook extends Publication {
+    private String subject;
 
     public Textbook(String title, String subject) {
-        super(title); // добавляем себя в список
+        super(title);
         this.subject = subject;
     }
 
     @Override
-    void show() {
+    public void show() {
         System.out.println("Textbook Title: " + title + ", Subject: " + subject);
     }
 }
