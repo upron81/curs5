@@ -1,5 +1,4 @@
 .vs
-report/
 .idea
 *.sqlite3
 __pycache__/
